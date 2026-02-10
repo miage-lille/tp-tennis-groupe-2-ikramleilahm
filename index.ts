@@ -22,10 +22,40 @@ export const otherPlayer = (player: Player) => {
 };
 // Exercice 1 :
 export const pointToString = (point: Point): string =>
-  'You can use pattern matching with switch case pattern.';
+  (() => {
+    switch (point.kind) {
+      case 'LOVE':
+        return 'Love';
+      case 'FIFTEEN':
+        return '15';
+      case 'THIRTY':
+        return '30';
+    }
+  })();
 
 export const scoreToString = (score: Score): string =>
-  'You can use pattern matching with switch case pattern.';
+  (() => {
+    switch (score.kind) {
+      case 'POINTS': {
+        const { pointsData } = score;
+        return `${pointToString(pointsData.PLAYER_ONE)} - ${pointToString(
+          pointsData.PLAYER_TWO
+        )}`;
+      }
+      case 'FORTY': {
+        const { fortyData } = score;
+        if (fortyData.player === 'PLAYER_ONE')
+          return `40 - ${pointToString(fortyData.otherPoint)}`;
+        return `${pointToString(fortyData.otherPoint)} - 40`;
+      }
+      case 'DEUCE':
+        return 'Deuce';
+      case 'ADVANTAGE':
+        return `Advantage ${playerToString(score.player)}`;
+      case 'GAME':
+        return `Game ${playerToString(score.player)}`;
+    }
+  })();
 
 export const scoreWhenDeuce = (winner: Player): Score => {
   throw new Error('not implemented');

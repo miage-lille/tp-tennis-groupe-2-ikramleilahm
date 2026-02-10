@@ -12,15 +12,15 @@ describe('Tests for tooling functions', () => {
 });
 
 describe('Tests for transition functions', () => {
-  // test('Given deuce, score is advantage to winner', () => {
-  //   console.log('To fill when we will know how represent Deuce');
-  // });
-  // test('Given advantage when advantagedPlayer wins, score is Game avantagedPlayer', () => {
-  //   console.log('To fill when we will know how represent Advantage');
-  // });
-  // test('Given advantage when otherPlayer wins, score is Deuce', () => {
-  //   console.log('To fill when we will know how represent Advantage');
-  // });
+  test('Given deuce, score is advantage to winner', () => {
+    console.log('To fill when we will know how represent Deuce');
+  });
+  test('Given advantage when advantagedPlayer wins, score is Game avantagedPlayer', () => {
+    console.log('To fill when we will know how represent Advantage');
+  });
+  test('Given advantage when otherPlayer wins, score is Deuce', () => {
+    console.log('To fill when we will know how represent Advantage');
+  });
   // test('Given a player at 40 when the same player wins, score is Game for this player', () => {
   //   console.log('To fill when we will know how represent Forty');
   // });
