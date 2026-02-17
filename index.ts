@@ -1,5 +1,5 @@
 import { Player, stringToPlayer } from './types/player';
-import { Point, PointsData, Score } from './types/score';
+import { Point, PointsData, Score, points, forty, fifteen, thirty, love } from './types/score';
 import { pipe, Option } from 'effect'
 
 // -------- Tooling functions --------- //
@@ -80,8 +80,35 @@ export const scoreWhenForty = (
 // Exercice 2
 // Tip: You can use pipe function from Effect to improve readability.
 // See scoreWhenForty function above.
+export const incrementPoint = (point: Point): Option.Option<Point> => {
+  switch (point.kind) {
+    case 'LOVE':
+      return Option.some(fifteen());
+    case 'FIFTEEN':
+      return Option.some(thirty());
+    case 'THIRTY':
+      return Option.none();
+  }
+};
+
 export const scoreWhenPoint = (current: PointsData, winner: Player): Score => {
-  throw new Error('not implemented');
+  if (winner === 'PLAYER_ONE') {
+    return pipe(
+      incrementPoint(current.PLAYER_ONE),
+      Option.match({
+        onNone: () => forty('PLAYER_ONE', current.PLAYER_TWO),
+        onSome: (p) => points(p, current.PLAYER_TWO),
+      })
+    );
+  }
+
+  return pipe(
+    incrementPoint(current.PLAYER_TWO),
+    Option.match({
+      onNone: () => forty('PLAYER_TWO', current.PLAYER_ONE),
+      onSome: (p) => points(current.PLAYER_ONE, p),
+    })
+  );
 };
 
 // Exercice 3
@@ -92,3 +119,6 @@ export const scoreWhenGame = (winner: Player): Score => {
 export const score = (currentScore: Score, winner: Player): Score => {
   throw new Error('not implemented');
 };
+
+// Re-export constructors for tests and external use
+export { points, love, fifteen, thirty, forty };

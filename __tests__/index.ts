@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { otherPlayer, playerToString } from '..';
+import { otherPlayer, playerToString, points, love, fifteen, thirty, scoreWhenPoint, forty } from '..';
 
 describe('Tests for tooling functions', () => {
   test('Given playerOne when playerToString', () => {
@@ -31,15 +31,15 @@ describe('Tests for transition functions', () => {
   //   console.log('To fill when we will know how represent Forty');
   // });
   // -------------------------TESTS POINTS-------------------------- //
-  // test('Given players at 0 or 15 points score kind is still POINTS', () => {
-  //   throw new Error(
-  //     'Your turn to code the preconditions, expected result and test.'
-  //   );
-  // });
+   test('Given players at 0 or 15 points score kind is still POINTS', () => {
+     throw new Error(
+      'Your turn to code the preconditions, expected result and test.'
+     );
+   });
 
-  // test('Given one player at 30 and win, score kind is forty', () => {
-  //   throw new Error(
-  //     'Your turn to code the preconditions, expected result and test.'
-  //   );
-  // });
+   test('Given one player at 30 and win, score kind is forty', () => {
+     throw new Error(
+       'Your turn to code the preconditions, expected result and test.'
+     );
+   });
 });
