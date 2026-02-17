@@ -1,5 +1,18 @@
-import { Player, stringToPlayer } from './types/player';
-import { Point, PointsData, Score, points, forty, fifteen, thirty, love } from './types/score';
+import { Player, stringToPlayer, isSamePlayer } from './types/player';
+import {
+  Point,
+  PointsData,
+  Score,
+  points,
+  forty,
+  fifteen,
+  thirty,
+  love,
+  FortyData,
+  deuce,
+  advantage,
+  game,
+} from './types/score';
 import { pipe, Option } from 'effect'
 
 // -------- Tooling functions --------- //
@@ -33,6 +46,19 @@ export const pointToString = (point: Point): string =>
     }
   })();
 
+export const stringToPoint = (str: string): Point => {
+  switch (str) {
+    case 'LOVE':
+      return love();
+    case 'FIFTEEN':
+      return fifteen();
+    case 'THIRTY':
+      return thirty();
+    default:
+      throw new Error(`Invalid point string: ${str}`);
+  }
+};
+
 export const scoreToString = (score: Score): string =>
   (() => {
     switch (score.kind) {
@@ -58,21 +84,30 @@ export const scoreToString = (score: Score): string =>
   })();
 
 export const scoreWhenDeuce = (winner: Player): Score => {
-  throw new Error('not implemented');
+  return advantage(winner);
 };
 
 export const scoreWhenAdvantage = (
   advantagedPlayed: Player,
   winner: Player
 ): Score => {
-  throw new Error('not implemented');
+  if (isSamePlayer(advantagedPlayed, winner)) return game(winner);
+  return deuce();
 };
 
 export const scoreWhenForty = (
-  currentForty: unknown, // TO UPDATE WHEN WE KNOW HOW TO REPRESENT FORTY
+  currentForty: FortyData,
   winner: Player
 ): Score => {
-  throw new Error('not implemented');
+  if (isSamePlayer(currentForty.player, winner)) return game(winner);
+
+  return pipe(
+    incrementPoint(currentForty.otherPoint),
+    Option.match({
+      onNone: () => deuce(),
+      onSome: (p) => forty(currentForty.player, p) as Score,
+    })
+  );
 };
 
 
@@ -113,11 +148,22 @@ export const scoreWhenPoint = (current: PointsData, winner: Player): Score => {
 
 // Exercice 3
 export const scoreWhenGame = (winner: Player): Score => {
-  throw new Error('not implemented');
+  return game(winner);
 };
 
 export const score = (currentScore: Score, winner: Player): Score => {
-  throw new Error('not implemented');
+  switch (currentScore.kind) {
+    case 'POINTS':
+      return scoreWhenPoint(currentScore.pointsData, winner);
+    case 'FORTY':
+      return scoreWhenForty(currentScore.fortyData, winner);
+    case 'DEUCE':
+      return scoreWhenDeuce(winner);
+    case 'ADVANTAGE':
+      return scoreWhenAdvantage(currentScore.player, winner);
+    case 'GAME':
+      return scoreWhenGame(currentScore.player);
+  }
 };
 
 // Re-export constructors for tests and external use
