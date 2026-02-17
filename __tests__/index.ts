@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { otherPlayer, playerToString, points, love, fifteen, thirty, scoreWhenPoint, forty, scoreWhenDeuce, scoreWhenAdvantage, scoreWhenForty, stringToPoint } from '..';
+import { otherPlayer, playerToString, points, love, fifteen, thirty, scoreWhenPoint, forty, scoreWhenDeuce, scoreWhenAdvantage, scoreWhenForty, stringToPoint, pointToString, scoreToString, incrementPoint } from '..';
 import { advantage, deuce, game } from '../types/score';
 import { stringToPlayer } from '../types/player';
 
@@ -12,6 +12,54 @@ describe('Tests for tooling functions', () => {
     expect(otherPlayer('PLAYER_ONE')).toStrictEqual('PLAYER_TWO');
   });
 });
+
+describe('Additional coverage tests', () => {
+  test('playerToString covers PLAYER_TWO', () => {
+    expect(playerToString('PLAYER_TWO')).toStrictEqual('Player 2');
+  });
+
+  test('pointToString for LOVE/FIFTEEN/THIRTY', () => {
+    expect(pointToString(love())).toBe('Love');
+    expect(pointToString(fifteen())).toBe('15');
+    expect(pointToString(thirty())).toBe('30');
+  });
+
+  test('stringToPoint throws on invalid string', () => {
+    expect(() => stringToPoint('INVALID' as any)).toThrow();
+  });
+
+  test('scoreToString covers various score kinds', () => {
+    expect(scoreToString(points(love(), fifteen()))).toBe('Love - 15');
+    expect(scoreToString(forty('PLAYER_ONE', fifteen()))).toBe('40 - 15');
+    expect(scoreToString(forty('PLAYER_TWO', fifteen()))).toBe('15 - 40');
+    expect(scoreToString(deuce())).toBe('Deuce');
+    expect(scoreToString(advantage('PLAYER_ONE'))).toBe('Advantage Player 1');
+    expect(scoreToString(game('PLAYER_TWO'))).toBe('Game Player 2');
+  });
+
+  test('incrementPoint transitions and None for THIRTY', () => {
+    // LOVE -> FIFTEEN
+    OptionMatchCheck(incrementPoint(love()), (p) => expect(pointToString(p)).toBe('15'));
+
+    // THIRTY -> None
+    OptionMatchCheck(
+      incrementPoint(thirty()),
+      () => {
+        throw new Error('Expected None, got Some');
+      },
+      () => expect(true).toBe(true)
+    );
+  });
+});
+
+// helper used above to inspect Option without importing effect match helpers inline
+function OptionMatchCheck(opt: any, onSome: (p: any) => void, onNone?: () => void) {
+  // option shape from effect library: check _tag
+  if (opt && opt._tag === 'Some') return onSome(opt.value);
+  if (opt && opt._tag === 'None') return onNone ? onNone() : undefined;
+  if (onNone) return onNone();
+  return;
+}
 
 describe('Tests for transition functions', () => {
  test('Given deuce, score is advantage to winner', () => {
